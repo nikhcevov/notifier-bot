@@ -3,21 +3,21 @@
 import time
 import requests
 from threading import Thread
-from os import path
+
 
 class Bot:
     def __init__(self):
         try:
-            self.token = open(path.relpath('configs/token')).read().split()[0]
+            self.token = open("configs/token").read().split()[0]
         except:
             raise Exception("The token file is invalid")
 
-        self.api = 'https://api.telegram.org/bot%s/' % self.token
+        self.api = "https://api.telegram.org/bot%s/" % self.token
         try:
-            self.offset = int(open(path.relpath('configs/offset')).read().split()[0])
+            self.offset = int(open("configs/offset").read().split()[0])
         except:
             self.offset = 0
-        self.me = self.botq('getMe')
+        self.me = self.botq("getMe")
         self.running = False
 
     def botq(self, method, params=None):
@@ -26,47 +26,55 @@ class Bot:
         return requests.post(url, params).json()
 
     def msg_recv(self, msg):
-        ''' method to override '''
+        """method to override"""
         pass
 
     def text_recv(self, txt, chatid):
-        ''' method to override '''
+        """method to override"""
         pass
 
     def updates(self):
-        data = {'offset': self.offset}
-        r = self.botq('getUpdates', data)
-        
-        for up in r['result']:
-            if 'message' in up:
-                self.msg_recv(up['message'])
-            elif 'edited_message' in up:
-                self.msg_recv(up['edited_message'])
+        data = {"offset": self.offset}
+        r = self.botq("getUpdates", data)
+
+        for up in r["result"]:
+            if "message" in up:
+                self.msg_recv(up["message"])
+            elif "edited_message" in up:
+                self.msg_recv(up["edited_message"])
             else:
                 # not a valid message
                 break
 
             try:
-                txt = up['message']['text']
-                self.text_recv(txt, self.get_to_from_msg(up['message']))
+                txt = up["message"]["text"]
+                self.text_recv(txt, self.get_to_from_msg(up["message"]))
             except:
                 pass
-            self.offset = up['update_id']
+            self.offset = up["update_id"]
             self.offset += 1
-        open(path.relpath('configs/offset'), 'w').write('%s' % self.offset)
+        open("configs/offset", "w").write("%s" % self.offset)
 
     def get_to_from_msg(self, msg):
-        to = ''
+        to = ""
         try:
-            to = msg['chat']['id']
+            to = msg["chat"]["id"]
         except:
-            to = ''
+            to = ""
         return to
 
     def reply(self, to, msg):
         if type(to) not in [int, str]:
             to = self.get_to_from_msg(to)
-        resp = self.botq('sendMessage', {'chat_id': to, 'text': msg, 'disable_web_page_preview': True, 'parse_mode': 'Markdown'})
+        resp = self.botq(
+            "sendMessage",
+            {
+                "chat_id": to,
+                "text": msg,
+                "disable_web_page_preview": True,
+                "parse_mode": "Markdown",
+            },
+        )
         return resp
 
     def run(self):
@@ -83,6 +91,6 @@ class Bot:
         self.running = False
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     bot = Bot()
     bot.run()
