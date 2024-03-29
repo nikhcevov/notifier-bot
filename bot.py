@@ -3,18 +3,18 @@
 import time
 import requests
 from threading import Thread
-
+from os import path
 
 class Bot:
     def __init__(self):
         try:
-            self.token = open('configs/token').read().split()[0]
+            self.token = open(path.relpath('configs/token')).read().split()[0]
         except:
             raise Exception("The token file is invalid")
 
         self.api = 'https://api.telegram.org/bot%s/' % self.token
         try:
-            self.offset = int(open('configs/offset').read().split()[0])
+            self.offset = int(open(path.relpath('configs/offset')).read().split()[0])
         except:
             self.offset = 0
         self.me = self.botq('getMe')
@@ -53,7 +53,7 @@ class Bot:
                 pass
             self.offset = up['update_id']
             self.offset += 1
-        open('configs/offset', 'w').write('%s' % self.offset)
+        open(path.relpath('configs/offset'), 'w').write('%s' % self.offset)
 
     def get_to_from_msg(self, msg):
         to = ''

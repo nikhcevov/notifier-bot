@@ -1,26 +1,29 @@
 #!/usr/bin/env python3
 
 import json
+from os import path
 from flask import Flask
 from flask import request
 from flask import jsonify
 from bot import Bot
 app = Flask(__name__)
 
+file_dir = os.path.dirname(os.path.realpath('__file__'))
+
 class GitlabBot(Bot):
     def __init__(self):
         try:
-            self.authmsg = open('configs/authmsg').read().strip()
+            self.authmsg = open(path.relpath("configs/authmsg")).read().strip()
         except:
             raise Exception("The authorization messsage file is invalid")
 
         super(GitlabBot, self).__init__()
         self.chats = {}
         try:
-            chats = open('configs/chats', 'r').read()
+            chats = open(path.relpath("configs/chats"), 'r').read()
             self.chats = json.loads(chats)
         except:
-            open('configs/chats', 'w').write(json.dumps(self.chats))
+            open(path.relpath('configs/chats'), 'w').write(json.dumps(self.chats))
 
         self.send_to_all('Hi !')
 
@@ -35,11 +38,11 @@ class GitlabBot(Bot):
             else:
                 self.reply(chatid, "\U0001F60E  Ok boy, you got the power !")
                 self.chats[chatid] = True
-                open('configs/chats', 'w').write(json.dumps(self.chats))
+                open(path.relpath('configs/chats'), 'w').write(json.dumps(self.chats))
         elif txt == 'shutupbot':
             del self.chats[chatid]
             self.reply(chatid, "\U0001F63F Ok, take it easy\nbye.")
-            open('configs/chats', 'w').write(json.dumps(self.chats))
+            open(path.relpath('configs/chats'), 'w').write(json.dumps(self.chats))
         else:
             self.reply(chatid, "\U0001F612 I won't talk to you.")
 
