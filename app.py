@@ -4,6 +4,8 @@ from flask import Flask
 from flask import request
 from flask import jsonify
 from bot import Bot
+from waitress import serve
+
 import os
 
 app = Flask(__name__)
@@ -149,4 +151,4 @@ def generateBuildMsg(data):
 
 if __name__ == "__main__":
     bot_instance.run_threaded()
-    app.run(host="0.0.0.0", port=10111)
+    serve(app, host="0.0.0.0", port=10111)
