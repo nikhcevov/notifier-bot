@@ -10,17 +10,17 @@ app = Flask(__name__)
 class GitlabBot(Bot):
     def __init__(self):
         try:
-            self.authmsg = open('authmsg').read().strip()
+            self.authmsg = open('configs/authmsg').read().strip()
         except:
             raise Exception("The authorization messsage file is invalid")
 
         super(GitlabBot, self).__init__()
         self.chats = {}
         try:
-            chats = open('chats', 'r').read()
+            chats = open('configs/chats', 'r').read()
             self.chats = json.loads(chats)
         except:
-            open('chats', 'w').write(json.dumps(self.chats))
+            open('configs/chats', 'w').write(json.dumps(self.chats))
 
         self.send_to_all('Hi !')
 
@@ -35,11 +35,11 @@ class GitlabBot(Bot):
             else:
                 self.reply(chatid, "\U0001F60E  Ok boy, you got the power !")
                 self.chats[chatid] = True
-                open('chats', 'w').write(json.dumps(self.chats))
+                open('configs/chats', 'w').write(json.dumps(self.chats))
         elif txt == 'shutupbot':
             del self.chats[chatid]
             self.reply(chatid, "\U0001F63F Ok, take it easy\nbye.")
-            open('chats', 'w').write(json.dumps(self.chats))
+            open('configs/chats', 'w').write(json.dumps(self.chats))
         else:
             self.reply(chatid, "\U0001F612 I won't talk to you.")
 
