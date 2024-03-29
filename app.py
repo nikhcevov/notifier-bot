@@ -8,8 +8,6 @@ from flask import jsonify
 from bot import Bot
 app = Flask(__name__)
 
-file_dir = os.path.dirname(os.path.realpath('__file__'))
-
 class GitlabBot(Bot):
     def __init__(self):
         try:
