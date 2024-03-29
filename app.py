@@ -1,56 +1,48 @@
 #!/usr/bin/env python3
 
-import json
 from flask import Flask
 from flask import request
 from flask import jsonify
 from bot import Bot
+import os
 
 app = Flask(__name__)
 
 
 class GitlabBot(Bot):
-    def __init__(self):
-        try:
-            self.authmsg = open("configs/authmsg").read().strip()
-        except:
-            raise Exception("The authorization messsage file is invalid")
-
-        super(GitlabBot, self).__init__()
+    def __init__(self, auth_message, token):
+        super(GitlabBot, self).__init__(token)
+        self.auth_message = auth_message
         self.chats = {}
-        try:
-            chats = open("configs/chats", "r").read()
-            self.chats = json.loads(chats)
-        except:
-            open("configs/chats", "w").write(json.dumps(self.chats))
-
         self.send_to_all("Hi !")
 
-    def text_recv(self, txt, chatid):
+    def text_recv(self, txt, chat_id):
         """registering chats"""
         txt = txt.strip()
+
         if txt.startswith("/"):
             txt = txt[1:]
-        if txt == self.authmsg:
-            if str(chatid) in self.chats:
-                self.reply(chatid, "\U0001F60E  boy, you already got the power.")
+
+        if txt == self.auth_message:
+            if str(chat_id) in self.chats:
+                self.reply(chat_id, "\U0001F60E  boy, you already got the power.")
             else:
-                self.reply(chatid, "\U0001F60E  Ok boy, you got the power !")
-                self.chats[chatid] = True
-                open("configs/chats", "w").write(json.dumps(self.chats))
+                self.reply(chat_id, "\U0001F60E  Ok boy, you got the power !")
+                self.chats[chat_id] = True
         elif txt == "shutupbot":
-            del self.chats[chatid]
-            self.reply(chatid, "\U0001F63F Ok, take it easy\nbye.")
-            open("configs/chats", "w").write(json.dumps(self.chats))
+            del self.chats[chat_id]
+            self.reply(chat_id, "\U0001F63F Ok, take it easy\nbye.")
         else:
-            self.reply(chatid, "\U0001F612 I won't talk to you.")
+            self.reply(chat_id, "\U0001F612 I won't talk to you.")
 
     def send_to_all(self, msg):
         for c in self.chats:
             self.reply(c, msg)
 
 
-b = GitlabBot()
+auth_message = os.environ.get("AUTHMSG")
+token = os.environ.get("TOKEN")
+bot_instance = GitlabBot(auth_message, token)
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -76,7 +68,7 @@ def webhook():
         msg = generatePipelineMsg(data)
     elif kind == "build":
         msg = generateBuildMsg(data)
-    b.send_to_all(msg)
+    bot_instance.send_to_all(msg)
     return jsonify({"status": "ok"})
 
 
@@ -156,5 +148,5 @@ def generateBuildMsg(data):
 
 
 if __name__ == "__main__":
-    b.run_threaded()
+    bot_instance.run_threaded()
     app.run(host="0.0.0.0", port=10111)

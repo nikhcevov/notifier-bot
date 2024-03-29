@@ -6,22 +6,15 @@ from threading import Thread
 
 
 class Bot:
-    def __init__(self):
-        try:
-            self.token = open("configs/token").read().split()[0]
-        except:
-            raise Exception("The token file is invalid")
-
-        self.api = "https://api.telegram.org/bot%s/" % self.token
-        try:
-            self.offset = int(open("configs/offset").read().split()[0])
-        except:
-            self.offset = 0
-        self.me = self.botq("getMe")
+    def __init__(self, token):
+        self.token = token
+        self.api_url = "https://api.telegram.org/bot%s/" % self.token
+        self.offset = 0
+        self.me = self.fetch("getMe")
         self.running = False
 
-    def botq(self, method, params=None):
-        url = self.api + method
+    def fetch(self, method, params=None):
+        url = self.api_url + method
         params = params if params else {}
         return requests.post(url, params).json()
 
@@ -35,7 +28,7 @@ class Bot:
 
     def updates(self):
         data = {"offset": self.offset}
-        r = self.botq("getUpdates", data)
+        r = self.fetch("getUpdates", data)
 
         for up in r["result"]:
             if "message" in up:
@@ -53,7 +46,6 @@ class Bot:
                 pass
             self.offset = up["update_id"]
             self.offset += 1
-        open("configs/offset", "w").write("%s" % self.offset)
 
     def get_to_from_msg(self, msg):
         to = ""
@@ -66,7 +58,7 @@ class Bot:
     def reply(self, to, msg):
         if type(to) not in [int, str]:
             to = self.get_to_from_msg(to)
-        resp = self.botq(
+        resp = self.fetch(
             "sendMessage",
             {
                 "chat_id": to,
@@ -89,8 +81,3 @@ class Bot:
 
     def stop(self):
         self.running = False
-
-
-if __name__ == "__main__":
-    bot = Bot()
-    bot.run()
