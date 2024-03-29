@@ -47,31 +47,40 @@ token = os.environ.get("TOKEN")
 bot_instance = GitlabBot(auth_message, token)
 
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET"])
+def index():
+    return jsonify(["Hello", "World"])
+
+
+@app.route("/webhook", methods=["GET", "POST"])
 def webhook():
-    data = request.json
-    # json contains an attribute that differenciates between the types, see
-    # https://docs.gitlab.com/ce/user/project/integrations/webhooks.html
-    # for more infos
-    kind = data["object_kind"]
-    if kind == "push":
-        msg = generatePushMsg(data)
-    elif kind == "tag_push":
-        msg = generatePushMsg(data)  # TODO:Make own function for this
-    elif kind == "issue":
-        msg = generateIssueMsg(data)
-    elif kind == "note":
-        msg = generateCommentMsg(data)
-    elif kind == "merge_request":
-        msg = generateMergeRequestMsg(data)
-    elif kind == "wiki_page":
-        msg = generateWikiMsg(data)
-    elif kind == "pipeline":
-        msg = generatePipelineMsg(data)
-    elif kind == "build":
-        msg = generateBuildMsg(data)
-    bot_instance.send_to_all(msg)
-    return jsonify({"status": "ok"})
+    try:
+        data = request.get_json(force=True)
+        print("Accepted event:", data)
+        # json contains an attribute that differenciates between the types, see
+        # https://docs.gitlab.com/ce/user/project/integrations/webhooks.html
+        # for more infos
+        kind = data["object_kind"]
+        if kind == "push":
+            msg = generatePushMsg(data)
+        elif kind == "tag_push":
+            msg = generatePushMsg(data)  # TODO:Make own function for this
+        elif kind == "issue":
+            msg = generateIssueMsg(data)
+        elif kind == "note":
+            msg = generateCommentMsg(data)
+        elif kind == "merge_request":
+            msg = generateMergeRequestMsg(data)
+        elif kind == "wiki_page":
+            msg = generateWikiMsg(data)
+        elif kind == "pipeline":
+            msg = generatePipelineMsg(data)
+        elif kind == "build":
+            msg = generateBuildMsg(data)
+        bot_instance.send_to_all(msg)
+        return jsonify({"status": "ok"})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
 
 
 def generatePushMsg(data):
@@ -150,5 +159,6 @@ def generateBuildMsg(data):
 
 
 if __name__ == "__main__":
+    print("App started")
     bot_instance.run_threaded()
     serve(app, host="0.0.0.0", port=10111)
