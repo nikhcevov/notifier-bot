@@ -16,7 +16,7 @@ Only work with python3
 1. Change the authmsg file with some secret keyworld
 1. Run the app.py in your server
 1. Create a webhook in your gitlab project that points to
-   http://yourserver:10111/
+   http://yourserver/webhook
 1. Talk to your bot and write only the keyworld
 1. You will receive each event in your repo
 
@@ -41,5 +41,5 @@ $ docker build -t bot .
 ```
 ## run
 ```shell
-$ docker run -d -p 10111:10111 --name bot -e AUTHMSG="XXX" -e TOKEN="XXX:XXX" bot
+$ docker run -d -p 80:8080 --name bot -e AUTHMSG="XXX" -e TOKEN="XXX:XXX" bot
 ```

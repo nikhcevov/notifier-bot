@@ -161,4 +161,4 @@ def generateBuildMsg(data):
 if __name__ == "__main__":
     print("App started")
     bot_instance.run_threaded()
-    serve(app, host="0.0.0.0", port=10111)
+    serve(app, host="0.0.0.0", port=8080)
