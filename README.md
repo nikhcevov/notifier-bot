@@ -1,39 +1,42 @@
 ## Project setup
-```
-# install requirements
-$ pip install pipenv
-$ pipenv run init
 
-# activate
-$ pipenv shell
+```sh
+# 1. Install requirements
+pip install pipenv
+pipenv run init
+
+# 2. Activate
+pipenv shell
 ```
 
-- Container
-```
-# build docker image
-$ docker build -t $(DOCKER_TAG_NAME) .
+```sh
+# build docker image *optional
+docker build -t $(DOCKER_TAG_NAME) .
 ```
 
 ## Run application
-```
+```sh
 # compiles and hot-reloads
-$ pipenv run start
+pipenv run start
 ```
 
-- Container
-```
-# run docker container
-$ docker container run --rm -p 5000:5000 $(DOCKER_TAG_NAME)
+```sh
+# run docker container *optional
+docker container run --rm -p 5000:5000 $(DOCKER_TAG_NAME)
 ```
 
 ## Extras
-```
+```sh
 # type check
-$ pipenv run type
+pipenv run type
+```
 
+```sh
 # lint
-$ pipenv run lint
+pipenv run lint
+```
 
+```sh
 # format
-$ pipenv run format
+pipenv run format
 ```

@@ -1,13 +1,9 @@
-import firebase_admin
 from flask import Flask
-from flask_cors import CORS
-
+from os import getenv
 from src.adapters.controllers.error_controller import errors
-from src.adapters.controllers.library_controller import library
-from src.adapters.controllers.pronunciation_controller import pronunciation
-from src.adapters.controllers.recommended_controller import recommended
-from src.adapters.controllers.song_controller import song
-from src.adapters.controllers.trending_controller import trending
+from src.adapters.controllers.gitlab_controller import gitlab
+from src.adapters.controllers.index_controller import index
+
 
 config = {
     "production": "config.ProdConfig",
@@ -15,25 +11,13 @@ config = {
     "test": "config.TestConfig",
 }
 
-secrets = "secrets.Secrets"
-
-origins = ["http://localhost:8080/*", "https://parrot-n2zzz72gsq-uc.a.run.app/*"]
-
 
 def create_app() -> Flask:
     app = Flask(__name__)
-    app.config.from_object(config[app.config.get("ENV", "development")])
-    app.config.from_object(secrets)
+    app.config.from_object(config[getenv("ENV", "development")])
 
-    firebase_admin.initialize_app()
-
+    app.register_blueprint(index)
     app.register_blueprint(errors)
-    app.register_blueprint(library)
-    app.register_blueprint(pronunciation)
-    app.register_blueprint(recommended)
-    app.register_blueprint(song)
-    app.register_blueprint(trending)
-
-    CORS(app, origins=origins)
+    app.register_blueprint(gitlab)
 
     return app
