@@ -9,12 +9,17 @@ verify_ssl = true
 name = "samokat"
 
 [packages]
-flask = "*"
+flask = "~=3.0"
 requests = "*"
 ipdb = "*"
 waitress = "*"
 gunicorn = "*"
 python-dotenv = "*"
+python-telegram-bot = "~=21.0"
+asyncio = "~=3.4"
+uvicorn = "~=0.29"
+asgiref = "~=3.8"
+dacite = "~=1.8"
 
 [dev-packages]
 

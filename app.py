@@ -1,9 +1,9 @@
 from dotenv import load_dotenv
-from src import create_app
+from src import main
+import asyncio
 
 load_dotenv()
 
-app = create_app()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+    asyncio.run(main())
