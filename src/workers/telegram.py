@@ -83,3 +83,5 @@ class TelegramWorker:
         self.__worker.add_handler(CommandHandler("stop", self.__stop))
 
         return self.__worker
+
+worker_instance = TelegramWorker()

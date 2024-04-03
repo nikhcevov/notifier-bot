@@ -2,7 +2,7 @@ import os
 import uvicorn
 from flask import Flask
 from asgiref.wsgi import WsgiToAsgi
-from src.workers.telegram import TelegramWorker
+from src.workers.telegram import worker_instance
 from src.adapters.controllers.error_controller import errors
 from src.adapters.controllers.gitlab_controller import gitlab
 from src.adapters.controllers.index_controller import index
@@ -40,7 +40,7 @@ async def main() -> None:
         )
     )
 
-    telegram_worker = TelegramWorker().init_worker()
+    telegram_worker = worker_instance.init_worker()
 
     # Run application and webserver together
     async with telegram_worker:

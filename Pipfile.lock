@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "22aebe2418f3e26c7fc73d7959f8a937f5e7713d181b5d14bd1ed07d340dc431"
+            "sha256": "b44f8db169abd883c6c1502e975c78acd714184693c0cbce6978e8df55030d29"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -28,6 +28,13 @@
             ],
             "markers": "python_version >= '3.8'",
             "version": "==4.3.0"
+        },
+        "apscheduler": {
+            "hashes": [
+                "sha256:e6df071b27d9be898e486bc7940a7be50b4af2e9da7c08f0744a96d4bd4cef4a",
+                "sha256:fb91e8a768632a4756a585f79ec834e0e27aad5860bac7eaa523d9ccefd87661"
+            ],
+            "version": "==3.10.4"
         },
         "asgiref": {
             "hashes": [
@@ -428,13 +435,22 @@
             "version": "==1.0.1"
         },
         "python-telegram-bot": {
+            "extras": [
+                "job-queue"
+            ],
             "hashes": [
                 "sha256:3e005962c9fda01b09480044c49b3dd70870ee0c63340374bf3d5191e3910be9",
                 "sha256:b282544d1a51bf228b868e2ce0285b8448982878e2362175836429722d6f8795"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.8'",
             "version": "==21.0.1"
+        },
+        "pytz": {
+            "hashes": [
+                "sha256:2a29735ea9c18baf14b448846bde5a48030ed267578472d8955cd0e7443a9812",
+                "sha256:328171f4e3623139da4983451950b28e95ac706e13f3f2630a879749e7a8b319"
+            ],
+            "version": "==2024.1"
         },
         "requests": {
             "hashes": [
@@ -475,6 +491,14 @@
             ],
             "markers": "python_version >= '3.8'",
             "version": "==5.14.2"
+        },
+        "tzlocal": {
+            "hashes": [
+                "sha256:49816ef2fe65ea8ac19d19aa7a1ae0551c834303d5014c6d5a62e4cbda8047b8",
+                "sha256:8d399205578f1a9342816409cc1e46a93ebd5755e39ea2d85334bea911bf0e6e"
+            ],
+            "markers": "python_version >= '3.8'",
+            "version": "==5.2"
         },
         "urllib3": {
             "hashes": [
