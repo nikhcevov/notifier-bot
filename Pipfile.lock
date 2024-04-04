@@ -1,18 +1,13 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b44f8db169abd883c6c1502e975c78acd714184693c0cbce6978e8df55030d29"
+            "sha256": "c3eb7225fa4797a0908c7fd0b975a55b1e95261bd84a5bfcf65578d0ff801ab9"
         },
         "pipfile-spec": 6,
         "requires": {
             "python_version": "3.9"
         },
         "sources": [
-            {
-                "name": "pypi",
-                "url": "https://pypi.org/simple",
-                "verify_ssl": true
-            },
             {
                 "name": "samokat",
                 "url": "https://nexus.samokat.io/repository/nexus-pypi-proxy/simple",
@@ -41,7 +36,7 @@
                 "sha256:3e1e3ecc849832fe52ccf2cb6686b7a55f82bb1d6aee72a58826471390335e47",
                 "sha256:c343bd80a0bec947a9860adb4c432ffa7db769836c64238fc34bdc3fec84d590"
             ],
-            "index": "pypi",
+            "index": "samokat",
             "markers": "python_version >= '3.8'",
             "version": "==3.8.1"
         },
@@ -59,7 +54,7 @@
                 "sha256:c46a87b48213d7464f22d9a497b9eef8c1928b68320a2fa94240f969f6fec08c",
                 "sha256:c4d18b22701821de07bd6aea8b53d21449ec0ec5680645e5317062ea21817d2d"
             ],
-            "index": "pypi",
+            "index": "samokat",
             "version": "==3.4.3"
         },
         "blinker": {
@@ -186,7 +181,7 @@
             "hashes": [
                 "sha256:cc31ad6fdea1f49962ea42db9421772afe01ac5442380d9a99fcf3d188c61afe"
             ],
-            "index": "pypi",
+            "index": "samokat",
             "markers": "python_version >= '3.6'",
             "version": "==1.8.1"
         },
@@ -219,7 +214,7 @@
                 "sha256:3232e0e9c850d781933cf0207523d1ece087eb8d87b23777ae38456e2fbe7c6e",
                 "sha256:822c03f4b799204250a7ee84b1eddc40665395333973dfb9deebfe425fefcb7d"
             ],
-            "index": "pypi",
+            "index": "samokat",
             "markers": "python_version >= '3.8'",
             "version": "==3.0.2"
         },
@@ -228,7 +223,7 @@
                 "sha256:3213aa5e8c24949e792bcacfc176fef362e7aac80b76c56f6b5122bf350722f0",
                 "sha256:88ec8bff1d634f98e61b9f65bc4bf3cd918a90806c6f5c48bc5603849ec81033"
             ],
-            "index": "pypi",
+            "index": "samokat",
             "markers": "python_version >= '3.5'",
             "version": "==21.2.0"
         },
@@ -277,7 +272,7 @@
                 "sha256:45529994741c4ab6d2388bfa5d7b725c2cf7fe9deffabdb8a6113aa5ed449ed4",
                 "sha256:e3ac6018ef05126d442af680aad863006ec19d02290561ac88b8b1c0b0cfc726"
             ],
-            "index": "pypi",
+            "index": "samokat",
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==0.13.13"
         },
@@ -446,7 +441,7 @@
                 "sha256:e324ee90a023d808f1959c46bcbc04446a10ced277783dc6ee09987c37ec10ca",
                 "sha256:f7b63ef50f1b690dddf550d03497b66d609393b40b564ed0d674909a68ebf16a"
             ],
-            "index": "pypi",
+            "index": "samokat",
             "markers": "python_version >= '3.8'",
             "version": "==1.0.1"
         },
@@ -473,7 +468,7 @@
                 "sha256:58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f",
                 "sha256:942c5a758f98d790eaed1a29cb6eefc7ffb0d1cf7af05c3d2791656dbd6ad1e1"
             ],
-            "index": "pypi",
+            "index": "samokat",
             "markers": "python_version >= '3.7'",
             "version": "==2.31.0"
         },
@@ -519,6 +514,8 @@
         "typing-extensions": {
             "hashes": [
                 "sha256:69b1a937c3a517342112fb4c6df7e72fc39a38e7891a5730ed4985b5214b5475",
+                "sha256:ada05f19b82a2ea6eeac4e7412a2328e70b5237f05f3ffef49cae6db558a914e",
+                "sha256:aee036f82b858bd4b43160c5dc2deb1780129223957eab47c3cac26b93b50e65",
                 "sha256:b0abd7c89e8fb96f98db18d86106ff1d90ab692004eb746cf6eda2682f91b3cb"
             ],
             "markers": "python_version < '3.11'",
@@ -545,7 +542,7 @@
                 "sha256:2c2aac7ff4f4365c206fd773a39bf4ebd1047c238f8b8268ad996829323473de",
                 "sha256:6a69214c0b6a087462412670b3ef21224fa48cae0e452b5883e8e8bdfdd11dd0"
             ],
-            "index": "pypi",
+            "index": "samokat",
             "markers": "python_version >= '3.8'",
             "version": "==0.29.0"
         },
@@ -554,7 +551,7 @@
                 "sha256:005da479b04134cdd9dd602d1ee7c49d79de0537610d653674cc6cbde222b8a1",
                 "sha256:2a06f242f4ba0cc563444ca3d1998959447477363a2d7e9b8b4d75d35cfd1669"
             ],
-            "index": "pypi",
+            "index": "samokat",
             "markers": "python_full_version >= '3.8.0'",
             "version": "==3.0.0"
         },

@@ -1,9 +1,4 @@
 [[source]]
-url = "https://pypi.org/simple"
-verify_ssl = true
-name = "pypi"
-
-[[source]]
 url = "https://nexus.samokat.io/repository/nexus-pypi-proxy/simple"
 verify_ssl = true
 name = "samokat"
