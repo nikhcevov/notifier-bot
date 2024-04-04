@@ -2,7 +2,8 @@ import os
 import logging
 from telegram import Update
 from telegram.constants import ParseMode
-from telegram.ext import Application, CallbackContext, CommandHandler, ContextTypes
+from telegram.ext import Application, CallbackContext, CommandHandler, ContextTypes, MessageHandler
+
 
 # Enable logging
 logging.basicConfig(
@@ -23,6 +24,8 @@ class TelegramWorker:
         self.__worker = None
 
     async def __start(self, update: Update, context: CallbackContext) -> None:
+        logger.info("Start command received")
+
         """Display a message on start bot command."""
         if update.message is None:
             logger.error("Update message is None")
@@ -37,6 +40,8 @@ class TelegramWorker:
             self.__active_chat_ids[chat_id] = True
 
     async def __stop(self, update: Update, context: CallbackContext):
+        logger.info("Stop command received")
+
         """Display a message on stop bot command."""
         if update.message is None:
             logger.error("Update message is None")
@@ -57,7 +62,6 @@ class TelegramWorker:
             logger.error("Job is None or missing chat_id or data")
             return
 
-        # check that job.data is a string
         if not isinstance(job.data, str):
             return
 
@@ -75,12 +79,18 @@ class TelegramWorker:
                 callback=self.__send_message_to_chat, when=0, chat_id=chat_id, data=message
             )
 
-    def init_worker(self) -> Application:
+    async def init_worker(self) -> Application:
         logger.log(logging.INFO, "Starting Telegram Worker")
 
         self.__worker = Application.builder().token(TOKEN).build()
         self.__worker.add_handler(CommandHandler("start", self.__start))
         self.__worker.add_handler(CommandHandler("stop", self.__stop))
+
+        await self.__worker.initialize()
+
+        if self.__worker.updater is not None:
+            logger.log(logging.INFO, "Starting polling")
+            await self.__worker.updater.start_polling(allowed_updates=Update.ALL_TYPES)
 
         return self.__worker
 

@@ -38,7 +38,7 @@ async def main() -> None:
         )
     )
 
-    telegram_worker = worker_instance.init_worker()
+    telegram_worker = await worker_instance.init_worker()
 
     # Run application and webserver together
     async with telegram_worker:
