@@ -14,8 +14,6 @@ flask_config = {
     "test": "config.TestConfig",
 }
 
-PORT = int(os.environ["PORT"])
-
 
 def create_flask_app() -> Flask:
     flask_app = Flask(__name__)
@@ -34,9 +32,9 @@ async def main() -> None:
     webserver = uvicorn.Server(
         config=uvicorn.Config(
             app=WsgiToAsgi(flask_app),
-            port=PORT,
+            port=8080,
             use_colors=False,
-            host="127.0.0.1",
+            host="0.0.0.0",
         )
     )
 

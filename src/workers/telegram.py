@@ -20,7 +20,7 @@ TOKEN = os.environ["TELEGRAM_TOKEN"]
 class TelegramWorker:
     def __init__(self):
         self.__active_chat_ids = {}
-        self.__worker: Application | None = None
+        self.__worker = None
 
     async def __start(self, update: Update, context: CallbackContext) -> None:
         """Display a message on start bot command."""
@@ -83,5 +83,6 @@ class TelegramWorker:
         self.__worker.add_handler(CommandHandler("stop", self.__stop))
 
         return self.__worker
+
 
 worker_instance = TelegramWorker()
