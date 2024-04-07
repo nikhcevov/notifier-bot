@@ -1,6 +1,6 @@
 from src.entities.message_client import MergeRequestMessage
 from src.adapters.repositories.message_client_repository import MessageClientRepository
-from src.workers.telegram import worker_instance
+from src.workers.impl.telegram import TelegramWorker
 import textwrap
 
 
@@ -24,4 +24,4 @@ class TelegramRepository(MessageClientRepository):
             )
         )
 
-        worker_instance.send_to_all_active_chats(merge_request_message)
+        TelegramWorker.send_to_all_active_chats(merge_request_message)

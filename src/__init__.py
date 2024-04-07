@@ -2,11 +2,14 @@ import os
 import uvicorn
 from flask import Flask
 from asgiref.wsgi import WsgiToAsgi
-from src.workers.telegram import worker_instance
 from src.adapters.controllers.error_controller import errors
 from src.adapters.controllers.gitlab_controller import gitlab
 from src.adapters.controllers.index_controller import index
-
+import asyncio
+from typing import List
+from src.workers.worker import Worker
+from src.workers.impl.telegram import TelegramWorker
+from src.utils.app_config import AppConfig
 
 flask_config = {
     "production": "config.ProdConfig",
@@ -26,6 +29,19 @@ def create_flask_app() -> Flask:
     return flask_app
 
 
+async def init_workers() -> List[Worker]:
+    workers = []
+
+    if AppConfig.message_clients.count("TELEGRAM") > 0:
+        workers.append(TelegramWorker)
+
+    if AppConfig.message_clients.count("ROCKETCHAT") > 0:
+        # workers.append()
+        pass
+
+    return workers
+
+
 async def main() -> None:
     flask_app = create_flask_app()
 
@@ -38,10 +54,7 @@ async def main() -> None:
         )
     )
 
-    telegram_worker = await worker_instance.init_worker()
+    workers = await init_workers()
 
-    # Run application and webserver together
-    async with telegram_worker:
-        await telegram_worker.start()
-        await webserver.serve()
-        await telegram_worker.stop()
+    # Run workers and webserver concurrently
+    await asyncio.gather(webserver.serve(), *(worker.start() for worker in workers))

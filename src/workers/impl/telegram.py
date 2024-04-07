@@ -2,7 +2,9 @@ import os
 import logging
 from telegram import Update
 from telegram.constants import ParseMode
-from telegram.ext import Application, CallbackContext, CommandHandler, ContextTypes, MessageHandler
+from telegram.ext import Application, CallbackContext, CommandHandler, ContextTypes
+from src.workers.worker import Worker
+from typing import Optional
 
 
 # Enable logging
@@ -18,12 +20,12 @@ logger = logging.getLogger(__name__)
 TOKEN = os.environ["TELEGRAM_TOKEN"]
 
 
-class TelegramWorker:
-    def __init__(self):
-        self.__active_chat_ids = {}
-        self.__worker = None
+class TelegramWorker(Worker):
+    __active_chat_ids = {}
+    __app: Optional[Application] = None
 
-    async def __start(self, update: Update, context: CallbackContext) -> None:
+    @staticmethod
+    async def __start(update: Update, context: CallbackContext) -> None:
         logger.info("Start command received")
 
         """Display a message on start bot command."""
@@ -33,13 +35,14 @@ class TelegramWorker:
 
         chat_id = update.message.chat_id
 
-        if str(chat_id) in self.__active_chat_ids:
+        if str(chat_id) in TelegramWorker.__active_chat_ids:
             await update.message.reply_html(text="This bot is already active in this chat.")
         else:
             await update.message.reply_html(text="Hello! \n\nThis bot is now active in this chat. ")
-            self.__active_chat_ids[chat_id] = True
+            TelegramWorker.__active_chat_ids[chat_id] = True
 
-    async def __stop(self, update: Update, context: CallbackContext):
+    @staticmethod
+    async def __stop(update: Update, context: CallbackContext):
         logger.info("Stop command received")
 
         """Display a message on stop bot command."""
@@ -48,13 +51,14 @@ class TelegramWorker:
             return
 
         chat_id = update.message.chat_id
-        del self.__active_chat_ids[chat_id]
+        del TelegramWorker.__active_chat_ids[chat_id]
 
         await update.message.reply_html(
             text="Goodbye! \n\nThank you for using the Gitlab Integration Bot!"
         )
 
-    async def __send_message_to_chat(self, context: ContextTypes.DEFAULT_TYPE) -> None:
+    @staticmethod
+    async def __send_message_to_chat(context: ContextTypes.DEFAULT_TYPE) -> None:
         """Send a message to a chat."""
         job = context.job
 
@@ -67,32 +71,34 @@ class TelegramWorker:
 
         await context.bot.send_message(job.chat_id, text=job.data, parse_mode=ParseMode.HTML)
 
-    def send_to_all_active_chats(self, message: str) -> None:
+    @staticmethod
+    def send_to_all_active_chats(message: str) -> None:
         """Send a message to all active chats."""
 
-        if self.__worker is None or self.__worker.job_queue is None:
+        if TelegramWorker.__app is None or TelegramWorker.__app.job_queue is None:
             logger.error("Job queue is None")
             return
 
-        for chat_id in self.__active_chat_ids:
-            self.__worker.job_queue.run_once(
-                callback=self.__send_message_to_chat, when=0, chat_id=chat_id, data=message
+        for chat_id in TelegramWorker.__active_chat_ids:
+            TelegramWorker.__app.job_queue.run_once(
+                callback=TelegramWorker.__send_message_to_chat,
+                when=0,
+                chat_id=chat_id,
+                data=message,
             )
 
-    async def init_worker(self) -> Application:
+    @staticmethod
+    async def start():
         logger.log(logging.INFO, "Starting Telegram Worker")
 
-        self.__worker = Application.builder().token(TOKEN).build()
-        self.__worker.add_handler(CommandHandler("start", self.__start))
-        self.__worker.add_handler(CommandHandler("stop", self.__stop))
+        TelegramWorker.__app = Application.builder().token(TOKEN).build()
+        TelegramWorker.__app.add_handler(CommandHandler("start", TelegramWorker.__start))
+        TelegramWorker.__app.add_handler(CommandHandler("stop", TelegramWorker.__stop))
 
-        await self.__worker.initialize()
+        await TelegramWorker.__app.initialize()
 
-        if self.__worker.updater is not None:
-            logger.log(logging.INFO, "Starting polling")
-            await self.__worker.updater.start_polling(allowed_updates=Update.ALL_TYPES)
+        if TelegramWorker.__app.updater is not None:
+            logger.log(logging.INFO, "Start polling")
+            await TelegramWorker.__app.updater.start_polling(allowed_updates=Update.ALL_TYPES)
 
-        return self.__worker
-
-
-worker_instance = TelegramWorker()
+        await TelegramWorker.__app.start()
