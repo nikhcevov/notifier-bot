@@ -1,7 +1,19 @@
 from dataclasses import dataclass
 from typing import List
 from src.exception.errors import ValidationError
-from src.entities.git_client import User, MergeRequestDetails
+
+
+@dataclass
+class User:
+    username: str
+    id: int
+
+@dataclass
+class MergeObjectAttributes:
+    action: str
+    id: int
+    title: str
+    url: str
 
 
 @dataclass
@@ -9,7 +21,7 @@ class MergeRequestRequest:
     object_kind: str
     reviewers: List[User]
     user: User
-    object_attributes: MergeRequestDetails
+    object_attributes: MergeObjectAttributes
 
     def __post_init__(self):
         if not self.object_kind:

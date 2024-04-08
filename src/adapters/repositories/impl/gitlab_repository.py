@@ -7,7 +7,9 @@ class GitlabRepository(GitClientRepository):
     def get_merge_request_message(self, merge_request: MergeRequest) -> MergeRequestMessage:
         return MergeRequestMessage(
             author=User(username=merge_request.user.username),
-            title=merge_request.details.title,
-            url=merge_request.details.url,
+            title=merge_request.title,
+            url=merge_request.url,
+            id=str(merge_request.id),
+            action=merge_request.event_action,
             reviewers=[User(username=reviewer.username) for reviewer in merge_request.reviewers],
         )

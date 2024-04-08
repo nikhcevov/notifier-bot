@@ -14,3 +14,5 @@ class MergeRequestMessage:
     reviewers: List[User]
     url: str
     title: str
+    id: str
+    action: str

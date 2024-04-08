@@ -5,6 +5,7 @@ from src.request_objects.gitlab.merge_request_request import MergeRequestRequest
 from src.use_cases.gitlab.impl.merge_request_use_case import MergeRequestUseCase
 from src.adapters.repositories.impl.gitlab_repository import GitlabRepository
 from src.adapters.repositories.impl.telegram_repository import TelegramRepository
+from src.adapters.repositories.impl.rocketchat_repository import RocketchatRepository
 from src.adapters.controllers.handlers.handler import handle_success
 from src.utils.app_config import AppConfig
 
@@ -17,8 +18,7 @@ def get_message_client_repos():
     if AppConfig.message_clients.count("TELEGRAM") > 0:
         message_client_repos.append(TelegramRepository())
     if AppConfig.message_clients.count("ROCKETCHAT") > 0:
-        # message_client_repos.append(RocketchatRepository())
-        pass
+        message_client_repos.append(RocketchatRepository())
 
     return message_client_repos
 

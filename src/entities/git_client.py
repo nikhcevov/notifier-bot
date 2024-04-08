@@ -4,19 +4,16 @@ from dataclasses import dataclass
 
 @dataclass
 class User:
-    id: int
+    id: str
     username: str
 
 
 @dataclass
-class MergeRequestDetails:
-    url: str
-    title: str
-
-
-@dataclass
 class MergeRequest:
+    id: str
     event_name: str
+    event_action: str
     reviewers: List[User]
     user: User
-    details: MergeRequestDetails
+    url: str
+    title: str

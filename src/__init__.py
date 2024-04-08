@@ -9,6 +9,7 @@ import asyncio
 from typing import List
 from src.workers.worker import Worker
 from src.workers.impl.telegram import TelegramWorker
+from src.workers.impl.rocketchat import RocketchatWorker
 from src.utils.app_config import AppConfig
 
 flask_config = {
@@ -36,7 +37,7 @@ async def init_workers() -> List[Worker]:
         workers.append(TelegramWorker)
 
     if AppConfig.message_clients.count("ROCKETCHAT") > 0:
-        # workers.append()
+        workers.append(RocketchatWorker)
         pass
 
     return workers
