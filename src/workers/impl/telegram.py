@@ -1,11 +1,19 @@
 import os
 import logging
-from telegram import Update
+from telegram import Update, Bot
 from telegram.constants import ParseMode
-from telegram.ext import Application, CallbackContext, CommandHandler, ContextTypes
+from telegram.ext import (
+    Application,
+    CallbackContext,
+    CommandHandler,
+    ContextTypes,
+    ExtBot,
+    JobQueue,
+)
 from src.workers.worker import Worker
-from typing import Optional
-
+from typing import Optional, Dict, Any, List
+from src.entities.message_client import MergeRequestEntityChat
+from src.workers.worker import PostedMessage
 
 # Enable logging
 logging.basicConfig(
@@ -21,8 +29,19 @@ TOKEN = os.environ["TELEGRAM_TOKEN"]
 
 
 class TelegramWorker(Worker):
-    __active_chat_ids = {}
-    __app: Optional[Application] = None
+    __active_chat_ids: Dict[str, bool] = {}
+
+    # TODO: How to type this as Application...build() return type?
+    __app: Optional[
+        Application[
+            ExtBot[None],
+            Any,
+            Dict[Any, Any],
+            Dict[Any, Any],
+            Dict[Any, Any],
+            JobQueue[Any],
+        ]
+    ] = None
 
     @staticmethod
     async def __start(update: Update, context: CallbackContext) -> None:
@@ -33,7 +52,7 @@ class TelegramWorker(Worker):
             logger.error("Update message is None")
             return
 
-        chat_id = update.message.chat_id
+        chat_id = str(update.message.chat_id)
 
         if str(chat_id) in TelegramWorker.__active_chat_ids:
             await update.message.reply_html(text="This bot is already active in this chat.")
@@ -50,7 +69,7 @@ class TelegramWorker(Worker):
             logger.error("Update message is None")
             return
 
-        chat_id = update.message.chat_id
+        chat_id = str(update.message.chat_id)
         del TelegramWorker.__active_chat_ids[chat_id]
 
         await update.message.reply_html(
@@ -58,34 +77,40 @@ class TelegramWorker(Worker):
         )
 
     @staticmethod
-    async def __send_message_to_chat(context: ContextTypes.DEFAULT_TYPE) -> None:
-        """Send a message to a chat."""
-        job = context.job
-
-        if job is None or job.chat_id is None or job.data is None:
-            logger.error("Job is None or missing chat_id or data")
-            return
-
-        if not isinstance(job.data, str):
-            return
-
-        await context.bot.send_message(job.chat_id, text=job.data, parse_mode=ParseMode.HTML)
-
-    @staticmethod
-    def send_to_all_active_chats(message: str) -> None:
+    async def post_message(message: str) -> List[PostedMessage]:
         """Send a message to all active chats."""
 
-        if TelegramWorker.__app is None or TelegramWorker.__app.job_queue is None:
-            logger.error("Job queue is None")
-            return
+        if TelegramWorker.__app is None:
+            logger.error("Telegram app is not initialized")
+            return []
+
+        resp = []
 
         for chat_id in TelegramWorker.__active_chat_ids:
-            TelegramWorker.__app.job_queue.run_once(
-                callback=TelegramWorker.__send_message_to_chat,
-                when=0,
-                chat_id=chat_id,
-                data=message,
+            # TODO: Run request in parallel
+            chat_resp = await TelegramWorker.__app.bot.send_message(
+                chat_id=chat_id, text=message, parse_mode=ParseMode.HTML
             )
+
+            message_id = str(chat_resp["message_id"])
+            resp.append(PostedMessage(chat_id=chat_id, message_id=message_id))
+
+        return resp
+
+    @staticmethod
+    async def reply_to_message_id(message_id: str, chat_id: str, message: str) -> None:
+        """Send a message to all active chats."""
+
+        if TelegramWorker.__app is None:
+            logger.error("Telegram app is not initialized")
+            return
+
+        await TelegramWorker.__app.bot.send_message(
+            chat_id=int(chat_id),
+            text=message,
+            parse_mode=ParseMode.HTML,
+            reply_to_message_id=int(message_id),
+        )
 
     @staticmethod
     async def start():

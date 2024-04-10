@@ -19,13 +19,14 @@ def get_message_client_repos():
         message_client_repos.append(TelegramRepository())
     if AppConfig.message_clients.count("ROCKETCHAT") > 0:
         message_client_repos.append(RocketchatRepository())
-
+        
     return message_client_repos
 
 
 @gitlab.route("/webhook", methods=["POST"])
-def gitlab_controller():
+async def gitlab_controller():
     data = json.loads(request.get_data())
+
     req = from_dict(data_class=MergeRequestRequest, data=data)
 
     git_client_repo = GitlabRepository()
@@ -33,6 +34,6 @@ def gitlab_controller():
     message_client_repos = get_message_client_repos()
 
     for message_client_repo in message_client_repos:
-        MergeRequestUseCase(git_client_repo, message_client_repo).handle(req)
+        await MergeRequestUseCase(git_client_repo, message_client_repo).handle(req)
 
     return handle_success()

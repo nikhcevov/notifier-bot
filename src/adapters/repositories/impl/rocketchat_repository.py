@@ -1,11 +1,11 @@
-from src.entities.message_client import MergeRequestMessage
+from src.entities.message_client import MergeRequestCreatedMessage
 from src.adapters.repositories.message_client_repository import MessageClientRepository
 from src.workers.impl.rocketchat import RocketchatWorker
 import textwrap
 
 
 class RocketchatRepository(MessageClientRepository):
-    def post_group_chat_message(self, message: MergeRequestMessage) -> None:
+    async def post_message(self, message: MergeRequestCreatedMessage) -> None:
         # Structure like [@user1, @user2]
         reviewers = ", ".join(
             ["@{reviewer}".format(reviewer=reviewer.username) for reviewer in message.reviewers]
@@ -24,4 +24,4 @@ class RocketchatRepository(MessageClientRepository):
             )
         )
 
-        RocketchatWorker.send_to_all_active_chats(merge_request_message)
+        RocketchatWorker.post_message(merge_request_message)

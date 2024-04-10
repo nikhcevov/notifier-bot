@@ -4,7 +4,7 @@ from src.workers.worker import Worker
 from requests import sessions
 from rocketchat_API.rocketchat import RocketChat
 from typing import Optional
-
+from requests import Response
 # Enable logging
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -23,12 +23,12 @@ class RocketchatWorker(Worker):
     __app: Optional[RocketChat] = None
 
     @staticmethod
-    def send_to_all_active_chats(message: str) -> None:
+    def post_message(message: str) -> None:
         """Send a message to all active chats."""
 
         if RocketchatWorker.__app is not None:
             for channel in CHANNELS:
-                RocketchatWorker.__app.chat_post_message(message, channel=channel)
+                resp = RocketchatWorker.__app.chat_post_message(message, channel=channel)
 
     @staticmethod
     async def start():
