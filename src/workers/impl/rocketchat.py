@@ -5,6 +5,7 @@ from requests import sessions
 from rocketchat_API.rocketchat import RocketChat
 from typing import Optional
 from requests import Response
+
 # Enable logging
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -17,6 +18,8 @@ logger = logging.getLogger(__name__)
 
 SERVER = os.environ["ROCKETCHAT_SERVER"]
 CHANNELS = os.environ["ROCKETCHAT_CHANNELS"].split(",")
+USER = os.environ["ROCKETCHAT_USER"]
+PASS = os.environ["ROCKETCHAT_PASSWORD"]
 
 
 class RocketchatWorker(Worker):
@@ -29,11 +32,13 @@ class RocketchatWorker(Worker):
         if RocketchatWorker.__app is not None:
             for channel in CHANNELS:
                 resp = RocketchatWorker.__app.chat_post_message(message, channel=channel)
+                print(resp)
 
     @staticmethod
     async def start():
         logger.log(logging.INFO, "Starting Rocketchat Worker")
 
         with sessions.Session() as session:
-            rocket = RocketChat("user", "pass", server_url=SERVER, session=session)
+            rocket = RocketChat(USER, PASS, server_url=SERVER, session=session)
             RocketchatWorker.__app = rocket
+            print(rocket.me().json())
